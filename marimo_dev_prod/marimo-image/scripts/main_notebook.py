@@ -9,6 +9,7 @@ def _():
     import marimo as mo
     import pandas as pd
     import matplotlib as plt
+    import plotnine as plot
 
     return
 
