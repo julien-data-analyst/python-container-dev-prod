@@ -1,0 +1,15 @@
+services:
+  marimo:
+    build:
+      context: ./marimo-image
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+    container_name: marimo-prod
+    command: uv run marimo run main_notebook.py --no-token --host 0.0.0.0 -p 8080
+    env_file:
+      - .env
+    volumes:
+      - ./marimo-image/scripts:/app/scripts
+    working_dir: /app/scripts
+    ports:
+      - "${MARIMO_PORT}:8080"
