@@ -1,0 +1,14 @@
+services:
+  python:
+    build:
+      context: ./python-image # search the Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION} # Define the version of python using .env
+    container_name: python-dev # Container name
+    env_file:
+      - .env # For the python script to get access to environment variables
+    volumes:
+      - ./python-image/scripts:/app/scripts # Useful for hot reload under Linux systems
+    working_dir: /app/
+    stdin_open: true # Let the container open even after finishing his command
+    tty: true
