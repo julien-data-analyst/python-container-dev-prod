@@ -5,7 +5,7 @@ services:
       args:
         PYTHON_VERSION: ${PYTHON_VERSION}
     container_name: marimo-dev
-    command: uv run marimo edit --no-token --host 0.0.0.0 -p 8080
+    command: marimo edit --no-token --host 0.0.0.0 -p 8080
     env_file:
       - .env
     volumes:
