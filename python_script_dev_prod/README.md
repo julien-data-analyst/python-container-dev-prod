@@ -2,11 +2,22 @@
 
 ## Use Case
 
-This Python container is designed for **prototyping and executing Python scripts** in both development and production environments. 
-It provides a flexible setup with separate configurations for:
+This Python container is designed for **prototyping and executing Python scripts** in both development and production environments. It provides a flexible setup with separate configurations for:
 
 - **Development Environment**: For testing, debugging, and development iterations
 - **Production Environment**: For stable, optimized script execution
+
+### Directory Structure
+
+**`one_component/`** - Single Component Architecture
+- Use this approach to build **a specific, standalone component** (backend service, data collection, data processing, etc.)
+- Ideal for microservices or modular applications where each container has a single responsibility
+- Best for clean separation of concerns
+
+**`many_components/`** - Multi-Component Architecture
+- Use this approach when you need to **manage multiple functionalities within a single container**
+- Suitable for complex pipelines with different dependencies, orchestrated builds, and prototyping scenarios
+- Allows managing interconnected features that require shared resources
 
 Use this setup to containerize your Python applications with environment-specific configurations while maintaining consistency across deployments.
 
