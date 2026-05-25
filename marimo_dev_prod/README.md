@@ -4,6 +4,9 @@
 
 This container is useful for **data exploration and automated report generation** using Marimo. 
 It provides a notebook-based workflow for analyzing datasets and producing reports in a reproducible environment.
+Be careful when using this container because it was created for only one component with uv pip install globally. 
+If you want to use it for a more complex project, consider using the Python container (*python_script_dev_prod*) 
+with multiple components.
 
 ## Modifying Attributes
 
