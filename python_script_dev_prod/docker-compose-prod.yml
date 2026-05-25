@@ -1,0 +1,11 @@
+services:
+  python:
+    build:
+      context: ./python-image # search the Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION} # Define the version of python using .env
+    container_name: python-dev
+    command: uv run python main.py
+    env_file:
+      - .env
+    working_dir: /app/scripts
