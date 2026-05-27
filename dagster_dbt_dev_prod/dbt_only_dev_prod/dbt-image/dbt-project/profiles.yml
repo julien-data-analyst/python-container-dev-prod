@@ -1,0 +1,14 @@
+dbt_project_changename:
+
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      user: postgres
+      password: postgres
+      port: 5432
+      dbname: datawarehouse
+      schema: public
+      threads: 1
+
+  target: dev

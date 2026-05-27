@@ -1,0 +1,46 @@
+services:
+
+  # ─────────────────────────────────────────
+  # PostgreSQL — Database for dbt (you can change it to another database if you want, just make sure to update the connection settings in profiles.yml
+  # ─────────────────────────────────────────
+  postgres:
+    image: postgres:15
+    container_name: postgres_db_dbt
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: datawarehouse
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ─────────────────────────────────────────
+  # dbt — Data transformation tool
+  # ─────────────────────────────────────────
+  dbt:
+    build:
+      context: ./dbt-image
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+    container_name: dbt-prod
+    environment:
+      DBT_PROFILES_DIR: /dbt-project/ # Point DBT to the correct profiles.yml location
+      DBT_ENGINE_PROJECT_DIR: /dbt-project/dbt_project_changename/ # Change the project name and this path to mark the path for your dbt_project.yml
+    env_file:
+      - .env
+    working_dir: /app
+    command: ["dbt", "run"]
+
+# ─────────────────────────────────────────
+# Docker volumes
+# ─────────────────────────────────────────
+volumes:
+  postgres_data:
+
+# ─────────────────────────────────────────
+# Docker network
+# ─────────────────────────────────────────
+networks:
+  data_network:
+    driver: bridge
