@@ -14,10 +14,19 @@ Also update the dbt configuration files accordingly:
 
 - `docker-compose-dev.yml`
 - `docker-compose-prod.yml`
-- `dbt-image/dbt-project/profiles.yml`
+- `dbt-image/profiles.yml`
 - `dbt-image/dbt-project/dbt_project.yml`
 
-These files must remain consistent so the container can locate and use the correct dbt project and profile settings.
+For the configuration of the database connection, profiles.yml is set up to use environment variables. You can modify the database connection details in the `.env` file:
+
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=datawarehouse
+POSTGRES_PORT=5434
+HOST_DB=postgres_db_dbt
+TYPE_DB=postgres
+```
 
 ## Launching the Project
 
