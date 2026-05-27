@@ -1,0 +1,14 @@
+dbt_project_changename:
+
+  outputs:
+    dev:
+      type: "{{ env_var('TYPE_DB') }"
+      host: "{{ env_var('HOST_DB') }}"
+      user: "{{ env_var('POSTGRES_USER') }}"
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: 5432
+      dbname: "{{ env_var('POSTGRES_DB') }}"
+      schema: public
+      threads: 1
+
+  target: dev

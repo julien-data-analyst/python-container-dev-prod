@@ -1,0 +1,78 @@
+services:
+
+  # ─────────────────────────────────────────
+  # PostgreSQL — Database for dbt 
+  # (you can change it to another database if you want, 
+  # just make sure to update the connection settings in profiles.yml)
+  # ─────────────────────────────────────────
+  postgres:
+    image: postgres:15
+    container_name: postgres_db_dbt
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - data_network
+
+  # ─────────────────────────────────────────
+  # dbt — Data transformation tool
+  # ─────────────────────────────────────────
+  dbt:
+    build:
+      context: ./dbt-image
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+    container_name: dbt-dev
+    environment:
+      DBT_PROFILES_DIR: /dbt-project/ # Point DBT to the correct profiles.yml location
+      DBT_ENGINE_PROJECT_DIR: /dbt-project/dbt_project_changename/ # Change the project name and this path to mark the path for your dbt_project.yml
+    env_file:
+      - .env
+    volumes:
+      - ./dbt-image/dbt-project:/app/
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    networks:
+      - data_network
+
+  # ─────────────────────────────────────────
+  # python extract - Data extraction
+  # ─────────────────────────────────────────
+  python:
+    build:
+      context: ./python-extract-image # search the Dockerfile
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION} # Define the version of python using .env
+    container_name: python-dev # Container name
+    env_file:
+      - .env # For the python script to get access to environment variables
+    volumes:
+      - ./python-extract-image/scripts:/app/scripts # Useful for hot reload under Linux systems
+    working_dir: /app/
+    stdin_open: true # Let the container open even after finishing his command
+    tty: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - data_network
+
+
+# ─────────────────────────────────────────
+# Docker volumes
+# ─────────────────────────────────────────
+volumes:
+  postgres_data:
+
+# ─────────────────────────────────────────
+# Docker network
+# ─────────────────────────────────────────
+networks:
+  data_network:
+    driver: bridge
