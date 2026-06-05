@@ -1,0 +1,48 @@
+
+services:
+  # ─────────────────────────────────────────
+  # PostgreSQL — Database for dbt / dagster
+  # (you can change it to another database if you want, 
+  # just make sure to update the connection settings in profiles.yml and workspace.yaml)
+  # ───────────────────────────────────────── 
+  postgres:
+    image: postgres:15
+    container_name: ${HOST_DB}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # ─────────────────────────────────────────
+  # Dagster + DBT — Orchestrator for data pipelines with ELT tools
+  # ─────────────────────────────────────────
+  dagster-dbt:
+    build: 
+      context: ./dagster-dbt-image
+    container_name: dagster-dbt-dev
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    environment:
+      DAGSTER_POSTGRES_HOST: ${HOST_DB}
+      DAGSTER_POSTGRES_USER: ${POSTGRES_USER}
+      DAGSTER_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DAGSTER_POSTGRES_DB: ${POSTGRES_DB}
+      DAGSTER_HOME: ${DAGSTER_HOME} # Point Dagster to the correct home directory for loading assets and definitions
+      DBT_PROFILES_DIR: ${DBT_PROFILES_DIR} # Point DBT to the correct profiles.yml location
+    ports:
+      - "${DAGSTER_PORT}:3000"
+    volumes:
+      # dagster + dbt code (hot reload)
+      - ./dagster-dbt-image:/dagster_dbt_project/
+
+    command: dg dev -h 0.0.0.0 -p 3000
+    working_dir: ${DAGSTER_WORKDIR}
+
+volumes:
+  postgres_data:
