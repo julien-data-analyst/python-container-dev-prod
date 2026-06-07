@@ -1,0 +1,17 @@
+services:
+  streamlit:
+    build:
+      context: ./streamlit-image
+      args:
+        PYTHON_VERSION: ${PYTHON_VERSION}
+    container_name: streamlit-dev
+    command: streamlit hello
+    env_file:
+      - .env
+    volumes:
+      - ./streamlit-image/scripts:/app/scripts
+    working_dir: /app/scripts
+    ports:
+      - "${STREAMLIT_PORT}:8501"
+    stdin_open: true
+    tty: true
