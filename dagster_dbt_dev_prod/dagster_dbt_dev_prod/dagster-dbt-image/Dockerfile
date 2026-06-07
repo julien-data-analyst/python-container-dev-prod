@@ -21,16 +21,13 @@ RUN apt-get update && apt-get install -y \
 # Set working directory inside builder container
 WORKDIR /app
 
-# Copy only dependency definition first (better Docker layer caching)
-COPY pyproject.toml ./
-
 # Copy application source code
 COPY dbt-project/ ./dbt-project/
 
-COPY dagster-project/ ./dagster_project/
+COPY dagster_project/ ./dagster_project/
 
 # Install dependencies using uv (creates environment / installs packages)
-RUN uv pip install --system --requirement pyproject.toml
+RUN uv pip install --system --requirement ./dagster_project/pyproject.toml
 
 
 # ---------------------------
@@ -57,10 +54,9 @@ COPY --from=builder /usr/local /usr/local
 # Copy application source code only (no build tools)
 COPY --from=builder /app/dbt-project .
 COPY --from=builder /app/dagster_project .
-COPY --from=builder /app/pyproject.toml ./dagster_project/
 
 # Ensure Python output is not buffered (useful for logs in Docker)
 ENV PYTHONUNBUFFERED=1
 
 # Command to dagster server in dev mode
-CMD ["dagster", "dev", "-h", "0.0.0.0", "-p", "3000"]
+CMD ["dg", "dev", "-h", "0.0.0.0", "-p", "3000"]

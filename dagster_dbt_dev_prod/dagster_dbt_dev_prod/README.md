@@ -17,11 +17,12 @@ If you need to update the project configuration, change these attributes:
 - **`.env`**
 - `docker-compose-dev.yml`
 - `docker-compose-prod.yml`
-- `dagster-dbt-image/dagster-project/dagster.yaml`
-- `dagster-dbt-image/dagster-project/workspace.yaml`
-- `dagster-dbt-image/dagster-project/src/dagster_dbt_projects_changename/` (project folder name)
-- `dagster-dbt-image/dbt-project/profiles.yml`
+- `dagster-dbt-image/dagster_project/dagster.yaml`
+- `dagster-dbt-image/dagster_project/workspace.yaml`
+- `dagster-dbt-image/dagster_project/src/dagster_dbt_projects_changename/` (project folder name)
+- `dagster-dbt-image/dbt-project/dbt_project_changename/profiles.yml`
 - `dagster-dbt-image/dbt-project/dbt_project_changename/dbt_project.yml`
+- `dagster-dbt-image/dagster_project/pyproject.toml` (if you change the project name or dependencies)
 
 These files and folders must remain consistent so Dagster can discover the correct project, and dbt can use the correct profile and project settings.
 

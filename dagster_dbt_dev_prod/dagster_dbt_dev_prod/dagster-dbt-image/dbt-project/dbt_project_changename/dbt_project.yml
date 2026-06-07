@@ -31,6 +31,28 @@ clean-targets:         # directories to be removed by `dbt clean`
 # files using the `{{ config(...) }}` macro.
 models:
   dbt_project_changename:
-    # Config indicated by + and applies to all files under models/example/
-    example:
-      +materialized: view
+    marts:
+      +materialized: table
+
+      fact_companies:
+        +tags: ['companies', 'mart_company']
+
+      dim_codes_naf_informatics:
+        +tags: ['codes_naf']
+      
+      dim_region_deps:
+        +tags: ['region_deps']
+
+      dim_companies_scd2:
+        +tags: ['scd2', 'mart_company']
+    
+    staging:
+        +materialized: table
+
+        companies_cleaned:
+          +tags: ['companies', 'staging_company']
+
+    
+
+  
+

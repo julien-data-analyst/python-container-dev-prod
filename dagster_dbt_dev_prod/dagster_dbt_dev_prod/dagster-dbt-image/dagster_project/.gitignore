@@ -1,0 +1,6 @@
+history/
+logs/
+.nux/
+.logs_queue/
+schedules/
+storage/
