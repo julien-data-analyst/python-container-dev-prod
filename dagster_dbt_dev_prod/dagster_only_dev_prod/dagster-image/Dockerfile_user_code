@@ -1,0 +1,65 @@
+ARG PYTHON_VERSION=3.11
+FROM python:${PYTHON_VERSION}-slim AS builder 
+
+# Copy uv binary from official image (fast modern dependency manager)
+COPY --from=ghcr.io/astral-sh/uv:0.4.20 /uv /bin/uv
+
+# Enable uv to use system Python instead of isolated environment
+ENV UV_SYSTEM_PYTHON=1
+
+# Dependencies to install psycopg2 package
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory inside builder container
+WORKDIR /app
+
+# Copy application source code
+COPY dbt-project/ ./dbt-project/
+COPY dagster_project/pyproject.toml .
+
+# Install dependencies using uv (creates environment / installs packages)
+RUN uv pip install --system --requirement pyproject.toml
+
+
+# ---------------------------
+# Stage 2: Runtime
+# ---------------------------
+
+FROM python:${PYTHON_VERSION}-slim AS runtime 
+
+# Copy uv binary from official image (fast modern dependency manager)
+COPY --from=ghcr.io/astral-sh/uv:0.4.20 /uv /bin/uv
+
+# Install git and other dependencies — required by dbt and psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory in final container
+WORKDIR /opt/dbt-project
+
+# Copy installed Python environment from builder stage
+COPY --from=builder /usr/local /usr/local
+COPY --from=builder /app/dbt-project .
+
+# Add code location code
+WORKDIR /opt/dagster/app
+COPY dagster_project/src/ /opt/dagster/app
+
+# Run dagster code server on port 4000
+EXPOSE 4000
+
+HEALTHCHECK \
+  --timeout=20s \
+  --start-period=20s \
+  --interval=10s \
+  --retries=12 \
+CMD ["dagster", "api", "grpc-health-check", "-p", "4000"]
+
+# CMD allows this to be overridden from run launchers or executors to execute runs and steps
+CMD ["dagster", "api", "grpc", "-h", "0.0.0.0", "-p", "4000", "-m", "dagster_dbt_projects_changename.definitions"]
