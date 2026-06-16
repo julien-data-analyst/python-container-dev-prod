@@ -74,3 +74,14 @@ dbt test     # run dbt tests
 
 To access the Dagster UI, open http://localhost:3000 in your browser. 
 You can view and manage your pipelines, schedules, and resources from there.
+
+### Particularities for the production environment
+The prod environment launched very well but you cannot execute some assets for register files.
+Why because since it launched a container explicitly for executing thses assets and your assets depends on the local filesytem storage.
+If you want to use these files, you need to externalize these ressources on a :
+- S3 (the most simple one)
+- GCS
+- Postgres (JSON storage)
+- DuckDB
+- Parquet storage
+- filesystem manager (IO manager, you need to mount your volumes everywhere)
