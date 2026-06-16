@@ -44,7 +44,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory in final container
-WORKDIR /dagster_dbt_project
+WORKDIR /dagster_project
 
 # Copy installed Python environment from builder stage
 COPY --from=builder /usr/local /usr/local
