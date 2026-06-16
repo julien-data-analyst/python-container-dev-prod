@@ -21,9 +21,7 @@ RUN apt-get update && apt-get install -y \
 # Set working directory inside builder container
 WORKDIR /app
 
-# Copy application source code
-COPY dbt-project/ ./dbt-project/
-
+# Copy dagster project
 COPY dagster_project/ ./dagster_project/
 
 # Install dependencies using uv (creates environment / installs packages)
@@ -52,7 +50,6 @@ WORKDIR /dagster_dbt_project
 COPY --from=builder /usr/local /usr/local
 
 # Copy application source code only (no build tools)
-COPY --from=builder /app/dbt-project .
 COPY --from=builder /app/dagster_project .
 
 # Ensure Python output is not buffered (useful for logs in Docker)
